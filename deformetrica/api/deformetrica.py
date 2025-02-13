@@ -2,7 +2,7 @@ import gc
 import logging
 import math
 import os
-import resource
+# import resource
 import sys
 import time
 
