@@ -12,7 +12,6 @@ def read(*parts):
     with open(os.path.join(here, *parts)) as fp:
         return fp.read().strip()
 
-
 def find_version(*file_paths):
     import re
     version_file = read(*file_paths)
@@ -24,10 +23,6 @@ def find_version(*file_paths):
 
 version = find_version("deformetrica", "__init__.py")
 
-try:  # for pip >= 10
-    from pip._internal.req import parse_requirements
-except ImportError:  # for pip <= 9.0.3
-    from pip.req import parse_requirements
 
 
 def str_to_bool(s):
