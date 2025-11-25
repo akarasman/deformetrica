@@ -1,4 +1,5 @@
 from enum import Enum
+from sys import platform
 
 from ...core import default
 from ...support.kernels.abstract_kernel import AbstractKernel
@@ -6,12 +7,17 @@ from ...support.kernels.abstract_kernel import AbstractKernel
 
 class Type(Enum):
     from ...support.kernels.torch_kernel import TorchKernel
-    from ...support.kernels.keops_kernel import KeopsKernel
+    import platform
+    if platform.system().lower() != "windows":
+        from ...support.kernels.keops_kernel import KeopsKernel
+        KEOPS = KeopsKernel
+    else:
+        KEOPS = None
 
     UNDEFINED = None
     NO_KERNEL = None
     TORCH = TorchKernel
-    KEOPS = KeopsKernel
+    
 
 
 instance_map = dict()

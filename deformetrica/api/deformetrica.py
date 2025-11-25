@@ -2,8 +2,9 @@ import gc
 import logging
 import math
 import os
-import resource
+# import resource
 import sys
+import platform
 import time
 
 import torch
@@ -584,8 +585,11 @@ class Deformetrica:
             model_options['initial_cp_spacing'] = default.initial_cp_spacing
         if 'deformation_kernel_width' not in model_options:
             model_options['deformation_kernel_width'] = default.deformation_kernel_width
-        if 'deformation_kernel_type' not in model_options:
-            model_options['deformation_kernel_type'] = default.deformation_kernel_type
+        if 'deformation_kernel_type' not in model_options or platform.system().lower() == "windows":
+            if platform.system().lower() == "windows":
+                model_options['deformation_kernel_type'] = "torch"
+            else:
+                model_options['deformation_kernel_type'] = default.deformation_kernel_type
         if 'number_of_processes' not in model_options:
             model_options['number_of_processes'] = default.number_of_processes
         if 't0' not in model_options:
@@ -754,7 +758,7 @@ class Deformetrica:
                              'the visit ages is %.2f') % (math.sqrt(model_options['initial_time_shift_variance']),
                                                           math.sqrt(var_visit_age)))
 
-        rlimit = resource.getrlimit(resource.RLIMIT_NOFILE)
+        # rlimit = resource.getrlimit(resource.RLIMIT_NOFILE)
         try:
             # cf: https://discuss.pytorch.org/t/a-call-to-torch-cuda-is-available-makes-an-unrelated-multi-processing-computation-crash/4075/2?u=smth
             torch.multiprocessing.set_start_method("spawn")
@@ -762,14 +766,14 @@ class Deformetrica:
             # torch.multiprocessing.set_sharing_strategy('file_system')
             torch.multiprocessing.set_sharing_strategy('file_descriptor')
             # https://github.com/pytorch/pytorch/issues/973#issuecomment-346405667
-            logger.debug("nofile (soft): " + str(rlimit[0]) + ", nofile (hard): " + str(rlimit[1]))
-            resource.setrlimit(resource.RLIMIT_NOFILE, (rlimit[1], rlimit[1]))
+            # logger.debug("nofile (soft): " + str(rlimit[0]) + ", nofile (hard): " + str(rlimit[1]))
+            # resource.setrlimit(resource.RLIMIT_NOFILE, (rlimit[1], rlimit[1]))
         except RuntimeError as e:
             logger.warning(str(e))
         except AssertionError:
             logger.warning('Could not set torch settings.')
-        except ValueError:
-            logger.warning('Could not set max open file. Currently using: ' + str(rlimit))
+        # except ValueError:
+        #     logger.warning('Could not set max open file. Currently using: ' + str(rlimit))
 
         if estimator_options is not None:
             # Initializes the state file.

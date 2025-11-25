@@ -1,4 +1,4 @@
-import resource
+# import resource
 import sys
 import time
 from threading import Thread

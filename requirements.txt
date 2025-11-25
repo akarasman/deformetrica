@@ -11,5 +11,5 @@ torch
 torchvision
 psutil>=5.4.8
 vtk>=8.2.0
-pykeops==1.4.1
+git+https://github.com/akarasman/keops.git#subdirectory=pykeops
 PyQt5
